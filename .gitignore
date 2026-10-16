@@ -1,0 +1,66 @@
+# ============================================================
+#  LaTeX build artifacts
+# ============================================================
+
+# Compiled PDF (remove this line if you want to commit it)
+*.pdf
+
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+*.lb
+
+# BibTeX / Biber
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*-blx.bib
+
+# latexmk
+*.fdb_latexmk
+
+# SyncTeX
+*.synctex.gz
+*.synctex(busy)
+
+# makeindex / glossaries
+*.idx
+*.ilg
+*.ind
+*.ist
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.lod
+
+# beamer / hyperref
+*.nav
+*.snm
+*.vrb
+
+# minted (syntax highlighting cache)
+_minted*/
+*.pyg
+*.minted
+
+# ============================================================
+#  Editor and OS
+# ============================================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db

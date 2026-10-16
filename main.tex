@@ -1,0 +1,77 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% main.tex: starter document
+%
+% It uses the parts of the toolchain that are usually the hardest to set up
+% (minted, biblatex, images), so if it compiles, your setup is ready.
+% Replace its content with your own document.
+%
+% Build: Ctrl+Alt+B in VS Code, or "latexmk" in a terminal.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}   % use [french] for a French document
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{minted}           % code highlighting, needs Pygments and -shell-escape
+\usepackage[sorting=none, backend=biber]{biblatex}
+\addbibresource{references.bib}
+\usepackage[hidelinks]{hyperref}
+
+\title{TeXready starter document}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{It works}
+
+If you can read this PDF, \LaTeX{}, \texttt{latexmk} and Perl are installed
+correctly. Double-click anywhere in the PDF to jump to the matching line in
+the source, and use \texttt{Ctrl+Alt+J} in the source to jump to the PDF.
+
+\section{Code highlighting}
+
+The block below is rendered by \texttt{minted}, which calls Pygments:
+
+\begin{minted}[frame=lines, linenos]{python}
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+print(greet("LaTeX"))
+\end{minted}
+
+\section{Tables and references}
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Tool & Role & Needed by \\
+    \midrule
+    MiKTeX & \TeX{} distribution & everything \\
+    Perl & runs \texttt{latexmk} & automatic builds \\
+    Pygments & syntax highlighting & \texttt{minted} \\
+    Biber & bibliography processing & \texttt{biblatex} \\
+    \bottomrule
+  \end{tabular}
+  \caption{The toolchain.}
+\end{table}
+
+Citations work too: see \cite{knuth1984texbook} and \cite{latexworkshop}.
+
+% Images go in the images/ folder:
+% \includegraphics[width=0.6\linewidth]{my-figure}
+
+\printbibliography
+
+\end{document}

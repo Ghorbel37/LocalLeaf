@@ -1,0 +1,61 @@
+{
+    // Jump between the source and the PDF (double-click in the PDF viewer)
+    "latex-workshop.synctex.afterBuild.enabled": true,
+    "latex-workshop.view.outline.sync.viewer": true,
+    "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click",
+    "latex-workshop.view.pdf.viewer": "tab",
+
+    // Build on save with latexmk (Ctrl+Alt+B builds manually)
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.recipe.default": "first",
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (pdflatex)",
+            "tools": ["latexmk"]
+        },
+        {
+            "name": "pdflatex (single pass)",
+            "tools": ["pdflatex"]
+        }
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            // -shell-escape is required by minted (code highlighting via Pygments)
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+                "-shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-recorder",
+                "-pdf",
+                "-outdir=%OUTDIR%",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "pdflatex",
+            "command": "pdflatex",
+            "args": [
+                "--max-print-line=10000",
+                "-shell-escape",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-recorder",
+                "%DOC%"
+            ]
+        }
+    ],
+
+    // Files removed by "LaTeX Workshop: Clean up auxiliary files"
+    "latex-workshop.latex.clean.fileTypes": [
+        "*.aux", "*.bbl", "*.bcf", "*.blg", "*.fdb_latexmk", "*.fls",
+        "*.lof", "*.log", "*.lot", "*.out", "*.run.xml", "*.toc",
+        "*.synctex.gz", "*-blx.bib"
+    ],
+
+    "files.encoding": "utf8",
+    "editor.wordWrap": "on"
+}
