@@ -37,10 +37,11 @@ while [ $# -gt 0 ]; do
 done
 
 # When piped from curl, stdin is the script itself: read answers from the terminal
+# ask PROMPT FALLBACK: FALLBACK is the answer when there is no terminal (CI, scripts)
 ask() {
-    local prompt="$1" answer=""
-    if [ -r /dev/tty ]; then
-        read -r -p "$prompt" answer </dev/tty
+    local prompt="$1" answer="$2"
+    if (exec </dev/tty) 2>/dev/null; then
+        read -r -p "$prompt" answer </dev/tty || answer="$2"
     fi
     printf '%s' "$answer"
 }
@@ -74,7 +75,7 @@ JUST_INSTALLED=0
 
 confirm() {
     [ "$YES" -eq 1 ] && return 0
-    case "$(ask "  Install $1 now? [Y/n] ")" in ""|[yYoO]*) return 0 ;; *) return 1 ;; esac
+    case "$(ask "  Install $1 now? [Y/n] " no)" in ""|[yYoO]*) return 0 ;; *) return 1 ;; esac
 }
 
 # check_tool NAME DETECT_COMMAND INSTALL_FUNCTION URL
@@ -143,7 +144,7 @@ echo "LocalLeaf: LaTeX in VS Code, set up on Linux (package manager: $PM)"
 # Piped from curl with no project name: offer to create one
 if [ ! -f "$0" ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
     echo
-    INIT="$(ask "Name of the project folder to create here (leave empty to only install the tools): ")"
+    INIT="$(ask "Name of the project folder to create here (leave empty to only install the tools): " "")"
 fi
 
 # Pygments is only needed by minted, which the example report uses
