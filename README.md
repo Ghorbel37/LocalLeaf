@@ -11,9 +11,9 @@ It comes with a ready-to-fill report template, a `.gitignore` made for LaTeX, an
 | Branch | What's inside | Pick it if |
 |---|---|---|
 | [`main`](../../tree/main) | The report template **filled with an example**: a cheat-sheet chapter showing figures, tables, code, equations, citations and acronyms | You want to see what it can do, or keep the examples at hand while writing |
-| [`bare`](../../tree/bare) | The same setup and report structure, **with empty chapters** ready to fill | You know LaTeX and want a clean start |
+| [`bare`](../../tree/bare) | Just the VS Code config, a `.gitignore` and the report structure **with empty chapters**. No setup scripts, and no Pygments or `-shell-escape` needed (code blocks use the built-in `listings` package) | You already have LaTeX installed and want a clean start |
 
-Both have the exact same VS Code config, setup scripts and `.gitignore`. To start from `bare`: when clicking **Use this template**, tick **Include all branches** and switch to `bare`, or clone it directly with `git clone -b bare https://github.com/Ghorbel37/LocalLeaf.git`, or [download its ZIP](../../archive/refs/heads/bare.zip).
+To start from `bare`: when clicking **Use this template**, tick **Include all branches** and switch to `bare`, or clone it directly with `git clone -b bare https://github.com/Ghorbel37/LocalLeaf.git`, or [download its ZIP](../../archive/refs/heads/bare.zip).
 
 ## What you get
 
