@@ -24,7 +24,7 @@ Both have the exact same VS Code config, setup scripts and `.gitignore`. To star
 | [`.latexmkrc`](.latexmkrc) | Same build options for the terminal, so `latexmk` alone is enough |
 | [`main.tex`](main.tex) | Report template: packages, page style, document outline |
 | [`metadata.tex`](metadata.tex) | Title, author, institution, supervisor, date: edit this first |
-| [`chapters/`](chapters/) | Title page, abstract, introduction, an example chapter (cheat sheet), conclusion, appendix |
+| [`chapters/`](chapters/) | Title page, abstract, introduction, conclusion, appendix, all empty and ready to fill |
 | [`acronyms.tex`](acronyms.tex) | Acronym list, printed automatically |
 | [`references.bib`](references.bib) | Bibliography |
 | [`images/`](images/) | Your figures |
@@ -130,7 +130,7 @@ latexmk -C       # remove build files and the PDF
 
 - Fill in [`metadata.tex`](metadata.tex). To show a logo on the title page, put it in `images/` and set `\reportLogo`.
 - Each chapter is a file in [`chapters/`](chapters/), included from `main.tex` with `\input{chapters/...}`. Add, remove or rename them freely.
-- [`chapters/03-example-chapter.tex`](chapters/03-example-chapter.tex) shows figures, tables, code, equations, citations, acronyms and lists. Keep it as a cheat sheet, then remove it from `main.tex`.
+- Want examples of figures, tables, code, equations or citations? See the [example chapter on the `main` branch](../../blob/main/chapters/03-example-chapter.tex).
 - For a French report, change `\usepackage[english]{babel}` to `\usepackage[french]{babel}` in `main.tex`.
 - `-shell-escape` is enabled because `minted` needs it to call Pygments. Only build documents you trust with this setup.
 
