@@ -1,145 +1,51 @@
-# LocalLeaf
+<p align="center">
+  <img src=".github/assets/logo.png" alt="LocalLeaf logo" width="110">
+</p>
 
-**Overleaf, but local, in VS Code. Batteries included.**
+<h1 align="center">LocalLeaf: ENIS report</h1>
 
-Write LaTeX in VS Code with everything you liked about Overleaf: the PDF rebuilds on every save and sits next to your source, double-click in the PDF jumps to the matching line, and bibliography and cross references just work. No internet, no compile timeout, your files stay in Git.
+<p align="center"><b>The ENIS graduation report template, ready to build in VS Code.</b></p>
 
-One command installs the toolchain on **Windows** or **Linux** and creates a ready-to-fill report.
+## Credit
 
-## Quick start
+This report template was created by **[Jacem Chaieb](https://jacem.ch)** ([kidager/enis-report-latex](https://github.com/kidager/enis-report-latex), also on [Overleaf](https://www.overleaf.com/latex/templates/national-school-of-engineers-of-sfax-enis-report/xjrnfvzfxqrn) under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)). All the credit for its design goes to him: if you use it, keep his name in the file headers and credit him.
 
-### Requirements
+LocalLeaf only adds the VS Code setup around it and two small fixes so it builds with current LaTeX distributions:
 
-- **[Visual Studio Code](https://code.visualstudio.com/download)**
-- The **[LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)** extension: install it from the Extensions view (**Ctrl+Shift+X**, search "LaTeX Workshop"), or run `code --install-extension james-yu.latex-workshop`
+- `\usepackage[francais,english]{babel}` became `[french,english]`, since recent babel versions removed the `francais` option.
+- `\printacronyms[header=...]` became `[heading=...]`, the option's new name in recent versions of `acro`.
 
-The setup script below installs everything else (the TeX distribution, Perl, ...). Open a terminal in the folder where you keep your projects and run the command for your system. It checks what is installed, asks before installing anything missing, creates the project folder and opens it in VS Code.
-
-**Windows** (PowerShell):
-
-```powershell
-iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1) } -Init my-report"
-```
-
-**Linux** (bash):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report
-```
-
-Replace `my-report` with your project name, or leave it out (just `-Init` or `--init`) and the script asks for it. Then open `main.tex` and press **Ctrl+Alt+B**.
-
-### Options
-
-| Windows | Linux | Effect |
-|---|---|---|
-| `-Init [NAME]` | `--init [NAME]` | Create a project in the folder `NAME` and open it in VS Code. Without `NAME`, the script asks for it |
-| `-Example` | `--example` | With init, start from the example report instead of the empty one |
-| `-CheckOnly` | `--check` | Only report what is installed, change nothing |
-| `-Yes` | `--yes` | Install everything missing without asking |
-| `-Test` | `--test` | Build `main.tex` at the end to prove everything works |
-
-Leave out the init option to only install the tools. The Windows script installs with [winget](https://learn.microsoft.com/windows/package-manager/winget/), which ships with Windows 10 and 11, and tells MiKTeX to download missing LaTeX packages automatically. The Linux script works with apt (Debian, Ubuntu, Mint), dnf (Fedora) and pacman (Arch, Manjaro), and uses `sudo` for the packages.
-
-## Two flavors
-
-| Branch | What's inside | Pick it if |
-|---|---|---|
-| [`main`](../../tree/main) | The VS Code config, a `.gitignore` and the report structure **with empty chapters**. | You want a clean start (this is what **Use this template** gives you) |
-| [`example`](../../tree/example) | A **full example report** (about 20 pages): images, subfigures, TikZ diagrams and charts, merged, colored and multi-page tables, highlighted code (`minted`), equations and theorems, citations, acronyms, footnotes and colored boxes. Also holds the setup scripts | You want to see what it can do, or keep the examples at hand while writing |
-
-Without the setup script: click **Use this template** for `main`, or clone a flavor with `git clone -b example https://github.com/Ghorbel37/LocalLeaf.git`, or download the [`main`](../../archive/refs/heads/main.zip) or [`example`](../../archive/refs/heads/example.zip) ZIP.
-
-## What's in a project
+## What's inside
 
 | File | What it does |
 |---|---|
-| [`.vscode/settings.json`](.vscode/settings.json) | LaTeX Workshop config: build with `latexmk` on save, SyncTeX (double-click in the PDF jumps to the source), PDF preview in a tab |
-| [`.vscode/extensions.json`](.vscode/extensions.json) | VS Code offers to install LaTeX Workshop when you open the folder |
-| [`main.tex`](main.tex) | Report structure: packages, page style, document outline |
-| [`metadata.tex`](metadata.tex) | Title, author, institution, supervisor, date: edit this first |
-| [`chapters/`](chapters/) | Title page, abstract, introduction, conclusion, appendix |
-| [`acronyms.tex`](acronyms.tex) | Acronym list, printed automatically |
-| [`references.bib`](references.bib) | Bibliography |
-| [`images/`](images/) | Your figures |
-| [`.gitignore`](.gitignore) | Ignores every LaTeX build file (`.aux`, `.log`, `.synctex.gz`, ...) |
+| [`001-report.tex`](001-report.tex) | Main file: packages and the list of chapters |
+| [`000-commands.tex`](000-commands.tex) | Your details: name, title, supervisors, jury, dates |
+| [`002-top_matter.tex`](002-top_matter.tex) | The official ENIS cover page |
+| [`003-thanks.tex`](003-thanks.tex) | Acknowledgements |
+| [`004-chapter0-introduction.tex`](004-chapter0-introduction.tex), [`004-chapter1.tex`](004-chapter1.tex) | Introduction and chapters. For more chapters, copy `004-chapter1.tex` and add it to `001-report.tex` |
+| [`005-conclusion.tex`](005-conclusion.tex), [`006-appendix.tex`](006-appendix.tex), [`007-references.tex`](007-references.tex) | Conclusion, appendix and references |
+| [`001-report.bib`](001-report.bib) | Bibliography |
+| [`008-abstract.pdf`](008-abstract.pdf) | Back cover with the abstract, added as a PDF |
+| [`enis-pfe-report.cls`](enis-pfe-report.cls) | The ENIS report style |
+| [`.vscode/`](.vscode/), [`.latexmkrc`](.latexmkrc) | LocalLeaf build setup: build on save, SyncTeX, `latexmk` from the terminal |
 
-## Manual installation
+## Use it
 
-Prefer to install things yourself? The only real difference between the two systems is that Windows needs MiKTeX and Strawberry Perl, while Linux uses TeX Live and already has Perl.
+Install the tools and create a project from this template in one command:
 
-| Tool | Why | Windows | Linux |
-|---|---|---|---|
-| VS Code | The editor | [Download](https://code.visualstudio.com/download) | [Download](https://code.visualstudio.com/download) |
-| TeX distribution | `pdflatex`, `latexmk`, `biber` and the LaTeX packages | [MiKTeX](https://miktex.org/download) | [TeX Live](https://tug.org/texlive/), from your package manager (see below) |
-| Perl | `latexmk` is a Perl script | [Strawberry Perl](https://strawberryperl.com/) | Already installed |
-| LaTeX Workshop | VS Code extension: build, preview, SyncTeX, autocompletion | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) |
-| Pygments | Only for the `example` branch: code highlighting with `minted` | [uv](https://docs.astral.sh/uv/getting-started/installation/), then `uv tool install pygments` | `python3-pygments` from your package manager |
-
-**Windows:** after installing MiKTeX, open the **MiKTeX Console**, go to **Settings** and set "Install missing packages on-the-fly" to **Always**. Install Strawberry Perl after MiKTeX and restart VS Code so it finds both.
-
-**Linux packages:**
-
-```bash
-# Debian, Ubuntu, Mint
-sudo apt install texlive-latex-extra texlive-fonts-recommended texlive-bibtex-extra lmodern latexmk biber
-
-# Fedora
-sudo dnf install texlive-scheme-medium texlive-acro texlive-biblatex latexmk biber
-
-# Arch, Manjaro
-sudo pacman -S texlive-basic texlive-latex texlive-latexrecommended texlive-latexextra texlive-fontsrecommended texlive-bibtexextra texlive-pictures texlive-binextra biber
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1) } -Init my-report -Enis"
 ```
 
-Want every LaTeX package at once? Install `texlive-full` (Debian, Ubuntu), `texlive-scheme-full` (Fedora) or `texlive` (Arch). It is several GB.
-
-## Using it
-
-### In VS Code
-
-| Shortcut | Action |
-|---|---|
-| **Ctrl+S** | Save and rebuild |
-| **Ctrl+Alt+B** | Build manually |
-| **Ctrl+Alt+V** | Open the PDF preview |
-| **Double-click in the PDF** | Jump to the matching line in the source |
-| **Ctrl+Alt+J** in the source | Jump to the matching place in the PDF |
-
-The TeX icon in the sidebar shows the document outline, the build recipes and the error list. Two recipes are available: `latexmk (pdflatex)` (default, runs as many passes as needed, bibliography included) and `pdflatex (single pass)` (quick rebuild).
-
-### From a terminal
-
 ```bash
-latexmk -pdf main.tex    # build
-latexmk -c               # remove build files, keep the PDF
-latexmk -C               # remove build files and the PDF
+curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report --enis
 ```
 
-### Making it yours
+Then open `001-report.tex` and press **Ctrl+Alt+B**. In a terminal, `latexmk` builds it.
 
-- Fill in [`metadata.tex`](metadata.tex). To show a logo on the title page, put it in `images/` and set `\reportLogo`.
-- Each chapter is a file in [`chapters/`](chapters/), included from `main.tex` with `\input{chapters/...}`. Add, remove or rename them freely.
-- Need an example of a figure, table, equation or citation? See the [chapters of the example report](../../tree/example/chapters).
-- For a French report, change `\usepackage[english]{babel}` to `\usepackage[french]{babel}` in `main.tex`.
-- The `example` branch builds with `-shell-escape`, because `minted` needs it to call Pygments. Only build documents you trust with it.
-
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `latexmk` cannot find Perl (Windows) | Install [Strawberry Perl](https://strawberryperl.com/), then restart VS Code |
-| `File 'xyz.sty' not found` (Linux) | Install the missing package, or `texlive-full` to never see this again |
-| Citations show as **[?]** or bold keys | Build again with `latexmk`, it runs Biber for you |
-| A tool was just installed but VS Code does not see it | Close every VS Code window and reopen it so it picks up the new PATH |
-| MiKTeX opens a popup for each package | Run `initexmf --set-config-value [MPM]AutoInstall=1`, or set it in the MiKTeX Console |
-| `minted` errors (`example` branch) | Install Pygments (see above), build with the provided recipe, and restart VS Code |
-
-## Useful links
-
-- [LaTeX Workshop wiki](https://github.com/James-Yu/LaTeX-Workshop/wiki)
-- [Overleaf's LaTeX guides](https://www.overleaf.com/learn), still the best place to learn LaTeX
-- [biblatex](https://ctan.org/pkg/biblatex), [acro](https://ctan.org/pkg/acro), [listings](https://ctan.org/pkg/listings), [minted](https://ctan.org/pkg/minted) and [latexmk](https://ctan.org/pkg/latexmk) documentation
+This template uses `minted` for code, so it needs Pygments and builds with `-shell-escape`. See the [main README](https://github.com/Ghorbel37/LocalLeaf#readme) for manual installation and troubleshooting.
 
 ## License
 
-[MIT](LICENSE)
+The template files are by Jacem Chaieb, under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The LocalLeaf setup files (`.vscode/`, `.latexmkrc`, `.gitignore`, setup scripts) are under the [MIT license](LICENSE).
