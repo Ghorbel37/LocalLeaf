@@ -84,7 +84,7 @@ Prefer to install things yourself? The only real difference between the two syst
 | TeX distribution | `pdflatex`, `latexmk`, `biber` and the LaTeX packages | [MiKTeX](https://miktex.org/download) | [TeX Live](https://tug.org/texlive/), from your package manager (see below) |
 | Perl | `latexmk` is a Perl script | [Strawberry Perl](https://strawberryperl.com/) | Already installed |
 | LaTeX Workshop | VS Code extension: build, preview, SyncTeX, autocompletion | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) |
-| Pygments | Only for the `example` and `enis` branches: code highlighting with `minted` | [uv](https://docs.astral.sh/uv/getting-started/installation/), then `uv tool install pygments` | `python3-pygments` from your package manager |
+| Pygments | Only for the `example` and `enis` branches, and only with an older `minted` (see [minted troubleshooting](#minted-troubleshooting)) | [uv](https://docs.astral.sh/uv/getting-started/installation/), then `uv tool install pygments` | `python3-pygments` from your package manager |
 
 **Windows:** after installing MiKTeX, open the **MiKTeX Console**, go to **Settings** and set "Install missing packages on-the-fly" to **Always**. Install Strawberry Perl after MiKTeX and restart VS Code so it finds both.
 
@@ -133,7 +133,7 @@ latexmk -C               # remove build files and the PDF
 - Each chapter is a file in [`chapters/`](chapters/), included from `main.tex` with `\input{chapters/...}`. Add, remove or rename them freely.
 - Need an example of a figure, table, equation or citation? See the [chapters of the example report](../../tree/example/chapters).
 - For a French report, change `\usepackage[english]{babel}` to `\usepackage[french]{babel}` in `main.tex`.
-- The `example` branch builds with `-shell-escape`, because `minted` needs it to call Pygments. Only build documents you trust with it.
+- The `example` branch builds with `-shell-escape`, because `minted` needs it to call its highlighter. Only build documents you trust with it.
 
 ## Troubleshooting
 
@@ -144,7 +144,22 @@ latexmk -C               # remove build files and the PDF
 | Citations show as **[?]** or bold keys | Build again with `latexmk`, it runs Biber for you |
 | A tool was just installed but VS Code does not see it | Close every VS Code window and reopen it so it picks up the new PATH |
 | MiKTeX opens a popup for each package | Run `initexmf --set-config-value [MPM]AutoInstall=1`, or set it in the MiKTeX Console |
-| `minted` errors (`example` branch) | Install Pygments (see above), build with the provided recipe, and restart VS Code |
+| Any `minted` error | See [minted troubleshooting](#minted-troubleshooting) below |
+
+### minted troubleshooting
+
+> [!WARNING]
+> `minted` (code highlighting in the `example` and `enis` flavors) breaks more often than any other package, because it calls an external program while LaTeX runs. The setup script compiles a small test document with `minted` and warns you if it fails. If you get stuck, go through these steps in order.
+
+1. **"You must invoke LaTeX with the -shell-escape flag".** Build with the provided recipe (**Ctrl+Alt+B**) or with `latexmk`: both pass `-shell-escape`. If you build any other way, add `-shell-escape` yourself.
+2. **Know which minted you have.** Open the `.log` file and search for `Package: minted`.
+   - **minted 3** (2024 and later, any up-to-date MiKTeX or TeX Live) calls `latexminted`, which comes with the TeX distribution and already includes Pygments. Check it with `latexminted --version`.
+   - **minted 2** (older distributions, such as the TeX Live of Ubuntu 22.04) calls `pygmentize`, which you install yourself. Check it with `pygmentize -V`.
+3. **"minted v3+ executable is not installed or is not added to PATH".** Update your distribution so `latexminted` is there: MiKTeX Console > **Updates** > **Update now** on Windows, `sudo tlmgr update --self --all` for a TeX Live installed from tug.org. On TeX Live, `latexminted` also needs Python 3.
+4. **Errors about `pygmentize` (minted 2).** Install Pygments: `uv tool install pygments` on Windows, `python3-pygments` on Linux. Then check that `pygmentize -V` works in a **new** terminal.
+5. **It works in a terminal but not in VS Code.** VS Code keeps the PATH it had when it started. Close every VS Code window (on Windows, also check the system tray) and open it again.
+6. **Still the old error after fixing something.** Delete the `_minted` folder next to your `.tex` file and build again: it caches results from earlier runs.
+7. **Something else.** Open the `.log` file and look for the first line that starts with `!`. That line is the real error, the rest usually follows from it.
 
 ## Useful links
 
