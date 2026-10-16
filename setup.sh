@@ -1,28 +1,49 @@
 #!/usr/bin/env bash
-# Checks and installs everything needed to write LaTeX in VS Code on Linux.
+# LocalLeaf: checks and installs everything needed to write LaTeX in VS Code
+# on Linux, and optionally creates a new project.
 #
-#   ./setup.sh             check, then install what is missing (asks first)
-#   ./setup.sh --check     only report what is installed
-#   ./setup.sh --yes       install what is missing without asking
-#   ./setup.sh --test      also build main.tex at the end
+#   ./setup.sh                    check, then install what is missing (asks first)
+#   ./setup.sh --init my-report   also create a new project and open it in VS Code
+#   ./setup.sh --example          with --init, start from the example report
+#   ./setup.sh --check            only report what is installed
+#   ./setup.sh --yes              install what is missing without asking
+#   ./setup.sh --test             also build main.tex at the end
+#
+# Run it without downloading anything first:
+#   curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report
 #
 # Supports apt (Debian, Ubuntu, Mint), dnf (Fedora) and pacman (Arch, Manjaro).
 # On Linux, Perl is already installed and TeX Live replaces MiKTeX.
 
 set -u
 
+REPO="Ghorbel37/LocalLeaf"
+INIT=""
+EXAMPLE=0
 CHECK_ONLY=0
 YES=0
 TEST=0
-for arg in "$@"; do
-    case "$arg" in
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --init) INIT="${2:-}"; shift ;;
+        --example) EXAMPLE=1 ;;
         --check) CHECK_ONLY=1 ;;
         --yes) YES=1 ;;
         --test) TEST=1 ;;
-        -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
-        *) echo "Unknown option: $arg"; exit 2 ;;
+        -h|--help) sed -n '2,16p' "$0" 2>/dev/null; exit 0 ;;
+        *) echo "Unknown option: $1"; exit 2 ;;
     esac
+    shift
 done
+
+# When piped from curl, stdin is the script itself: read answers from the terminal
+ask() {
+    local prompt="$1" answer=""
+    if [ -r /dev/tty ]; then
+        read -r -p "$prompt" answer </dev/tty
+    fi
+    printf '%s' "$answer"
+}
 
 green() { printf '\033[32m%s\033[0m\n' "$1"; }
 yellow() { printf '\033[33m%s\033[0m\n' "$1"; }
@@ -53,8 +74,7 @@ JUST_INSTALLED=0
 
 confirm() {
     [ "$YES" -eq 1 ] && return 0
-    read -r -p "  Install $1 now? [Y/n] " answer
-    case "$answer" in ""|[yYoO]*) return 0 ;; *) return 1 ;; esac
+    case "$(ask "  Install $1 now? [Y/n] ")" in ""|[yYoO]*) return 0 ;; *) return 1 ;; esac
 }
 
 # check_tool NAME DETECT_COMMAND INSTALL_FUNCTION URL
@@ -87,16 +107,52 @@ need_pm() {
 
 install_vscode() {
     red "  VS Code is not in the default repositories of most distributions."
-    echo "  Download the .deb or .rpm from https://code.visualstudio.com/download"
-    echo "  (or run: sudo snap install code --classic), then run this script again."
+    echo "  Install it from https://code.visualstudio.com/download, then run this script again."
     return 1
 }
 install_texlive() { need_pm && install_pkgs $TEX_PACKAGES; }
 install_pygments() { need_pm && install_pkgs $PYGMENTS_PACKAGE; }
 install_extension() { command -v code >/dev/null 2>&1 && code --install-extension james-yu.latex-workshop; }
 
-echo "Local LaTeX setup for VS Code on Linux (package manager: $PM)"
+# new_project NAME BRANCH: download a branch of the repository without its Git history
+new_project() {
+    local target="$PWD/$1" branch="$2"
+    if [ -e "$target" ]; then
+        red "  [ERROR]   The folder $target already exists, pick another name."
+        return 1
+    fi
+    mkdir -p "$target"
+    if ! curl -fsSL "https://github.com/$REPO/archive/refs/heads/$branch.tar.gz" | tar -xz -C "$target" --strip-components=1; then
+        red "  [ERROR]   Could not download the template."
+        rm -rf "$target"
+        return 1
+    fi
+    rm -f "$target/setup.ps1" "$target/setup.sh"
+    if command -v git >/dev/null 2>&1; then
+        git -C "$target" init --quiet
+        green "  [OK]      Created $target (new Git repository)"
+    else
+        green "  [OK]      Created $target"
+    fi
+    PROJECT_DIR="$target"
+}
+
+echo "LocalLeaf: LaTeX in VS Code, set up on Linux (package manager: $PM)"
 [ "$CHECK_ONLY" -eq 1 ] && echo "(check only, nothing will be installed)"
+
+# Piped from curl with no project name: offer to create one
+if [ ! -f "$0" ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
+    echo
+    INIT="$(ask "Name of the project folder to create here (leave empty to only install the tools): ")"
+fi
+
+# Pygments is only needed by minted, which the example report uses
+PROJECT_DIR=""
+NEEDS_MINTED=$EXAMPLE
+if [ -z "$INIT" ]; then
+    if [ -f "$0" ]; then PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"; else PROJECT_DIR="$PWD"; fi
+    grep -q '{minted}' "$PROJECT_DIR/main.tex" 2>/dev/null && NEEDS_MINTED=1
+fi
 
 step "Editor"
 check_tool "Visual Studio Code" "command -v code" install_vscode "https://code.visualstudio.com/download"
@@ -104,34 +160,47 @@ check_tool "Visual Studio Code" "command -v code" install_vscode "https://code.v
 step "TeX distribution"
 check_tool "Perl" "command -v perl" "false" "https://www.perl.org/get.html"
 check_tool "TeX Live (pdflatex, latexmk, biber)" \
-    "command -v pdflatex && command -v latexmk && command -v biber && kpsewhich minted.sty && kpsewhich acro.sty" \
+    "command -v pdflatex && command -v latexmk && command -v biber && kpsewhich acro.sty" \
     install_texlive "https://tug.org/texlive/"
-
-step "Code highlighting (minted)"
-check_tool "Pygments" "command -v pygmentize" install_pygments "https://pygments.org/"
 
 step "VS Code extension"
 check_tool "LaTeX Workshop" "code --list-extensions | grep -qx james-yu.latex-workshop" install_extension \
     "https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop"
+
+if [ "$NEEDS_MINTED" -eq 1 ]; then
+    step "Code highlighting (minted, used by the example report)"
+    check_tool "Pygments" "command -v pygmentize && kpsewhich minted.sty" install_pygments "https://pygments.org/"
+fi
 
 if [ "$JUST_INSTALLED" -eq 1 ]; then
     echo
     echo "  Some tools were just installed: restart VS Code so it sees them."
 fi
 
-if [ "$TEST" -eq 1 ]; then
+if [ -n "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
+    step "New project"
+    if [ "$EXAMPLE" -eq 1 ]; then new_project "$INIT" example; else new_project "$INIT" main; fi
+fi
+
+if [ "$TEST" -eq 1 ] && [ -n "$PROJECT_DIR" ]; then
     step "Test build"
+    LATEXMK_ARGS="-pdf -interaction=nonstopmode -quiet"
+    [ "$NEEDS_MINTED" -eq 1 ] && LATEXMK_ARGS="$LATEXMK_ARGS -shell-escape"
     if [ "$MISSING" -eq 1 ]; then
         red "  Skipping the test build: some tools are missing."
-    elif (cd "$(dirname "$0")" && latexmk -quiet main.tex); then
-        green "  [OK]      main.pdf built"
+    elif (cd "$PROJECT_DIR" && latexmk $LATEXMK_ARGS main.tex); then
+        green "  [OK]      main.pdf built in $PROJECT_DIR"
     else
         red "  [ERROR]   The build failed, see main.log for details."
     fi
 fi
 
-if [ "$MISSING" -eq 1 ]; then
-    exit 1
-fi
+[ "$MISSING" -eq 1 ] && exit 1
+
 echo
-green "All set. Open this folder in VS Code and press Ctrl+Alt+B to build main.tex."
+if [ -n "$INIT" ] && [ -n "$PROJECT_DIR" ]; then
+    command -v code >/dev/null 2>&1 && code "$PROJECT_DIR"
+    green "All set. VS Code is opening $PROJECT_DIR: open main.tex and press Ctrl+Alt+B."
+else
+    green "All set. Open your project folder in VS Code and press Ctrl+Alt+B to build main.tex."
+fi
