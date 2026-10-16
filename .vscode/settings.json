@@ -53,6 +53,14 @@
         "*.synctex.gz", "*-blx.bib"
     ],
 
+    // Hide build files from the Explorer, like Overleaf does
+    "files.exclude": {
+        "**/*.aux": true, "**/*.bbl": true, "**/*.bcf": true, "**/*.blg": true,
+        "**/*.fdb_latexmk": true, "**/*.fls": true, "**/*.lof": true, "**/*.lol": true,
+        "**/*.log": true, "**/*.lot": true, "**/*.out": true, "**/*.run.xml": true,
+        "**/*.toc": true, "**/*.synctex.gz": true, "**/*-blx.bib": true, "**/_minted*": true
+    },
+
     "files.encoding": "utf8",
     "editor.wordWrap": "on"
 }

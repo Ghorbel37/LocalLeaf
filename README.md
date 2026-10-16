@@ -10,7 +10,7 @@ Write LaTeX in VS Code with everything you liked about Overleaf: the PDF rebuild
 
 One command installs the toolchain on **Windows** or **Linux** and creates a ready-to-fill report.
 
-![Pages from the example report: figures, charts, tables and code](.github/assets/showcase.png)
+![LocalLeaf in a fresh VS Code: the source on the left, the PDF on the right, synced to the same chart](.github/assets/vscode-figures.png)
 
 ## Quick start
 
@@ -58,6 +58,8 @@ Leave out the init option to only install the tools. The Windows script installs
 
 Without the setup script: click **Use this template** for `main`, or clone a flavor with `git clone -b example https://github.com/Ghorbel37/LocalLeaf.git`, or download the [`main`](../../archive/refs/heads/main.zip), [`example`](../../archive/refs/heads/example.zip) or [`enis`](../../archive/refs/heads/enis.zip) ZIP.
 
+![Pages from the example report: figures, charts, tables and code](.github/assets/showcase.png)
+
 ## What's in a project
 
 | File | What it does |
@@ -104,6 +106,8 @@ Want every LaTeX package at once? Install `texlive-full` (Debian, Ubuntu), `texl
 ## Using it
 
 ### In VS Code
+
+![Editing a table: the PDF jumps to the matching place with Ctrl+Alt+J](.github/assets/vscode-tables.png)
 
 | Shortcut | Action |
 |---|---|
