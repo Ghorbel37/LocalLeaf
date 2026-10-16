@@ -1,77 +1,102 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% main.tex: starter document
+% main.tex: entry point of the report
 %
-% It uses the parts of the toolchain that are usually the hardest to set up
-% (minted, biblatex, images), so if it compiles, your setup is ready.
-% Replace its content with your own document.
+%   main.tex          <- this file: packages, settings, document outline
+%   metadata.tex      <- title, author, date... (edit this first)
+%   chapters/         <- one file per chapter
+%   images/           <- figures
+%   references.bib    <- bibliography
 %
 % Build: Ctrl+Alt+B in VS Code, or "latexmk" in a terminal.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\documentclass[12pt, a4paper]{article}
+\documentclass[12pt, a4paper, oneside]{report}
 
+% --- Language and fonts --------------------------------------------------
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[english]{babel}   % use [french] for a French document
+\usepackage[english]{babel}     % use [french] for a French report
+\usepackage{lmodern}
+\usepackage{microtype}          % nicer spacing and margins
+
+% --- Page layout ---------------------------------------------------------
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+% --- Figures and tables --------------------------------------------------
 \usepackage{graphicx}
 \graphicspath{{images/}}
-\usepackage{booktabs}
+\usepackage{float}              % [H] placement
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}           % professional table rules
+\usepackage{tabularx}
 \usepackage{xcolor}
-\usepackage{minted}           % code highlighting, needs Pygments and -shell-escape
+\usepackage{tikz}
+
+% --- Math ----------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% --- Code highlighting (needs Pygments and -shell-escape) ----------------
+\usepackage{minted}
+\setminted{frame=lines, framesep=2mm, fontsize=\small, linenos, breaklines}
+
+% --- Acronyms ------------------------------------------------------------
+\usepackage{acro}
+\input{acronyms}
+
+% --- Bibliography --------------------------------------------------------
 \usepackage[sorting=none, backend=biber]{biblatex}
 \addbibresource{references.bib}
+
+% --- Links (load last) ---------------------------------------------------
 \usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink]{cleveref}
+\crefname{listing}{listing}{listings}
+\Crefname{listing}{Listing}{Listings}
 
-\title{TeXready starter document}
-\author{Your Name}
-\date{\today}
+% --- Report information --------------------------------------------------
+\input{metadata}
 
+\hypersetup{
+  pdftitle  = {\reportTitle},
+  pdfauthor = {\reportAuthor},
+}
+
+% =========================================================================
 \begin{document}
 
-\maketitle
+% --- Front matter (roman page numbers) -----------------------------------
+\pagenumbering{roman}
+\input{chapters/00-title-page}
+\input{chapters/01-abstract}
+
 \tableofcontents
+\listoffigures
+\listoftables
+\printacronyms[heading=chapter*, name=List of Acronyms]
 
-\section{It works}
+% --- Main matter (arabic page numbers) -----------------------------------
+\cleardoublepage
+\pagenumbering{arabic}
 
-If you can read this PDF, \LaTeX{}, \texttt{latexmk} and Perl are installed
-correctly. Double-click anywhere in the PDF to jump to the matching line in
-the source, and use \texttt{Ctrl+Alt+J} in the source to jump to the PDF.
+\input{chapters/02-introduction}
+\input{chapters/03-example-chapter}
+\input{chapters/04-conclusion}
 
-\section{Code highlighting}
+% --- Back matter ---------------------------------------------------------
+\printbibliography[heading=bibintoc]
 
-The block below is rendered by \texttt{minted}, which calls Pygments:
-
-\begin{minted}[frame=lines, linenos]{python}
-def greet(name: str) -> str:
-    return f"Hello, {name}!"
-
-print(greet("LaTeX"))
-\end{minted}
-
-\section{Tables and references}
-
-\begin{table}[h]
-  \centering
-  \begin{tabular}{lll}
-    \toprule
-    Tool & Role & Needed by \\
-    \midrule
-    MiKTeX & \TeX{} distribution & everything \\
-    Perl & runs \texttt{latexmk} & automatic builds \\
-    Pygments & syntax highlighting & \texttt{minted} \\
-    Biber & bibliography processing & \texttt{biblatex} \\
-    \bottomrule
-  \end{tabular}
-  \caption{The toolchain.}
-\end{table}
-
-Citations work too: see \cite{knuth1984texbook} and \cite{latexworkshop}.
-
-% Images go in the images/ folder:
-% \includegraphics[width=0.6\linewidth]{my-figure}
-
-\printbibliography
+\appendix
+\input{chapters/05-appendix}
 
 \end{document}

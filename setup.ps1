@@ -102,7 +102,7 @@ function Test-Tool {
     }
 }
 
-Write-Host 'TeXready setup: LaTeX + VS Code on Windows' -ForegroundColor Cyan
+Write-Host 'Local LaTeX setup for VS Code on Windows' -ForegroundColor Cyan
 if ($CheckOnly) { Write-Host '(check only, nothing will be installed)' }
 
 Write-Step 'Editor'
