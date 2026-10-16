@@ -1,10 +1,16 @@
-# LocalLeaf
+<p align="center">
+  <img src=".github/assets/logo.png" alt="LocalLeaf logo" width="110">
+</p>
 
-**Overleaf, but local, in VS Code. Batteries included.**
+<h1 align="center">LocalLeaf</h1>
+
+<p align="center"><b>Overleaf, but local, in VS Code. Batteries included.</b></p>
 
 Write LaTeX in VS Code with everything you liked about Overleaf: the PDF rebuilds on every save and sits next to your source, double-click in the PDF jumps to the matching line, and bibliography and cross references just work. No internet, no compile timeout, your files stay in Git.
 
 One command installs the toolchain on **Windows** or **Linux** and creates a ready-to-fill report.
+
+![Pages from the example report: figures, charts, tables and code](.github/assets/showcase.png)
 
 ## Quick start
 
