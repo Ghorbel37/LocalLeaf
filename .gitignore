@@ -4,6 +4,8 @@
 
 # Compiled PDF (remove this line if you want to commit it)
 *.pdf
+!008-abstract.pdf
+!images/*.pdf
 
 *.aux
 *.lof
