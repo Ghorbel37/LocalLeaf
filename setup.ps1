@@ -234,10 +234,55 @@ if ((Find-Command 'initexmf') -and -not $CheckOnly) {
     Write-Ok 'MiKTeX installs missing packages automatically'
 }
 
+# minted is the part that most often breaks: compile a tiny document to be sure it works
+function Test-Minted {
+    $dir = Join-Path ([IO.Path]::GetTempPath()) ("localleaf-minted-" + [guid]::NewGuid())
+    New-Item -ItemType Directory $dir | Out-Null
+    $tex = @'
+\documentclass{article}
+\usepackage{minted}
+\begin{document}
+\begin{minted}{python}
+print("minted works")
+\end{minted}
+\end{document}
+'@
+    Set-Content -Path (Join-Path $dir 'test.tex') -Value $tex -Encoding ascii
+    Push-Location $dir
+    try {
+        pdflatex -shell-escape -interaction=nonstopmode -halt-on-error test.tex 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0 -and (Test-Path 'test.pdf')) { return $null }
+        $firstError = Select-String -Path 'test.log' -Pattern '^! ' -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($firstError) { return $firstError.Line.TrimStart('!', ' ') }
+        return 'pdflatex failed, no error message found'
+    } finally {
+        Pop-Location
+        Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue
+    }
+}
+
+if ($needsMinted -and (Find-Command 'pdflatex')) {
+    Write-Step 'minted test (compiling a small code block)'
+    $mintedError = Test-Minted
+    if ($mintedError) {
+        Write-Host "  [WARNING] minted does not work yet: $mintedError" -ForegroundColor Yellow
+        Write-Host '            Common fixes:' -ForegroundColor Yellow
+        Write-Host '            - Close every VS Code window and terminal, then try again (PATH changes need a restart)' -ForegroundColor Yellow
+        Write-Host '            - Install Pygments: uv tool install pygments' -ForegroundColor Yellow
+        Write-Host '            - Update MiKTeX in the MiKTeX Console (Updates tab), minted 3 needs a recent latexminted' -ForegroundColor Yellow
+        Write-Host '            - Delete the _minted folder next to your .tex file, it caches old results' -ForegroundColor Yellow
+        Write-Host '            More: https://github.com/Ghorbel37/LocalLeaf#minted-troubleshooting' -ForegroundColor Yellow
+        $results['minted'] = 'warning'
+    } else {
+        Write-Ok 'minted works: code blocks are highlighted'
+        $results['minted'] = 'works'
+    }
+}
+
 Write-Step 'Summary'
 $results.GetEnumerator() | ForEach-Object {
     $color = 'Green'
-    if ($_.Value -in @('missing', 'skipped')) { $color = 'Yellow' }
+    if ($_.Value -in @('missing', 'skipped', 'warning')) { $color = 'Yellow' }
     if ($_.Value -eq 'failed') { $color = 'Red' }
     Write-Host ('  {0,-20} {1}' -f $_.Key, $_.Value) -ForegroundColor $color
 }
@@ -273,6 +318,10 @@ if ($Test -and $projectDir) {
 if ($notReady.Count -gt 0) {
     if ($FromFile) { exit 1 }
     return
+}
+
+if ($results['minted'] -eq 'warning') {
+    Write-Host "`nAlmost set: everything is installed, but code blocks (minted) will fail until the warning above is fixed." -ForegroundColor Yellow
 }
 
 if ($Name -and $projectDir) {

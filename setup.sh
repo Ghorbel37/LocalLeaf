@@ -79,6 +79,7 @@ fi
 
 MISSING=0
 JUST_INSTALLED=0
+MINTED_WARNING=0
 
 confirm() {
     [ "$YES" -eq 1 ] && return 0
@@ -195,6 +196,42 @@ if [ "$NEEDS_MINTED" -eq 1 ]; then
     check_tool "Pygments" "command -v pygmentize && kpsewhich minted.sty" install_pygments "https://pygments.org/"
 fi
 
+# minted is the part that most often breaks: compile a tiny document to be sure it works
+test_minted() {
+    local dir rc
+    dir="$(mktemp -d)"
+    cat > "$dir/test.tex" <<'TEX'
+\documentclass{article}
+\usepackage{minted}
+\begin{document}
+\begin{minted}{python}
+print("minted works")
+\end{minted}
+\end{document}
+TEX
+    (cd "$dir" && pdflatex -shell-escape -interaction=nonstopmode -halt-on-error test.tex >/dev/null 2>&1 && [ -f test.pdf ])
+    rc=$?
+    [ $rc -ne 0 ] && MINTED_ERROR="$(grep -m1 '^! ' "$dir/test.log" 2>/dev/null | sed 's/^! //')"
+    rm -rf "$dir"
+    return $rc
+}
+
+if [ "$NEEDS_MINTED" -eq 1 ] && command -v pdflatex >/dev/null 2>&1 && kpsewhich minted.sty >/dev/null 2>&1; then
+    step "minted test (compiling a small code block)"
+    MINTED_ERROR=""
+    if test_minted; then
+        green "  [OK]      minted works: code blocks are highlighted"
+    else
+        MINTED_WARNING=1
+        yellow "  [WARNING] minted does not work yet: ${MINTED_ERROR:-pdflatex failed}"
+        yellow "            Common fixes:"
+        yellow "            - Restart VS Code and your terminal (PATH changes need a restart)"
+        yellow "            - Install Pygments (${PYGMENTS_PACKAGE:-Pygments}) and Python 3"
+        yellow "            - Delete the _minted folder next to your .tex file, it caches old results"
+        yellow "            More: https://github.com/Ghorbel37/LocalLeaf#minted-troubleshooting"
+    fi
+fi
+
 if [ "$JUST_INSTALLED" -eq 1 ]; then
     echo
     echo "  Some tools were just installed: restart VS Code so it sees them."
@@ -223,6 +260,9 @@ fi
 [ "$MISSING" -eq 1 ] && exit 1
 
 echo
+if [ "$MINTED_WARNING" -eq 1 ]; then
+    yellow "Almost set: everything is installed, but code blocks (minted) will fail until the warning above is fixed."
+fi
 if [ -n "$INIT" ] && [ -n "$PROJECT_DIR" ]; then
     command -v code >/dev/null 2>&1 && code "$PROJECT_DIR"
     green "All set. VS Code is opening $PROJECT_DIR: open the main .tex file and press Ctrl+Alt+B."
