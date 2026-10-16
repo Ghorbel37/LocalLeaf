@@ -6,6 +6,15 @@ Write LaTeX in VS Code with everything you liked about Overleaf: the PDF rebuild
 
 It comes with a ready-to-fill report template, a `.gitignore` made for LaTeX, and a setup script for **Windows** and **Linux** that checks what is installed and installs the rest.
 
+## Two flavors
+
+| Branch | What's inside | Pick it if |
+|---|---|---|
+| [`main`](../../tree/main) | The report template **filled with an example**: a cheat-sheet chapter showing figures, tables, code, equations, citations and acronyms | You want to see what it can do, or keep the examples at hand while writing |
+| [`bare`](../../tree/bare) | The same setup and report structure, **with empty chapters** ready to fill | You know LaTeX and want a clean start |
+
+Both have the exact same VS Code config, setup scripts and `.gitignore`. To start from `bare`: when clicking **Use this template**, tick **Include all branches** and switch to `bare`, or clone it directly with `git clone -b bare https://github.com/Ghorbel37/LocalLeaf.git`, or [download its ZIP](../../archive/refs/heads/bare.zip).
+
 ## What you get
 
 | File | What it does |
