@@ -16,8 +16,12 @@
       iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1) } -Init my-report"
 
 .PARAMETER Init
-    Create a new project in this folder (relative to the current directory)
-    and open it in VS Code.
+    Create a new project in the current directory and open it in VS Code.
+    Give the project name right after it (-Init my-report), or leave it out
+    and the script asks for it.
+
+.PARAMETER Name
+    Name of the project folder to create (implies -Init).
 
 .PARAMETER Example
     With -Init, start from the example report instead of the empty one.
@@ -36,7 +40,9 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Init,
+    [switch]$Init,
+    [Parameter(Position = 0)]
+    [string]$Name,
     [switch]$Example,
     [switch]$CheckOnly,
     [switch]$Yes,
@@ -151,15 +157,22 @@ function New-Project($Name, $Branch) {
 Write-Host 'LocalLeaf: LaTeX in VS Code, set up on Windows' -ForegroundColor Cyan
 if ($CheckOnly) { Write-Host '(check only, nothing will be installed)' }
 
-# Run from memory with no project name: offer to create one
-if (-not $FromFile -and -not $Init -and -not $CheckOnly) {
-    $Init = Read-Host "`nName of the project folder to create here (leave empty to only install the tools)"
+# -Init without a name: ask for it
+if ($Init -and -not $Name -and -not $CheckOnly) {
+    while (-not $Name) {
+        $Name = (Read-Host "`nName of your report (a folder with this name is created here)").Trim()
+    }
+}
+
+# Run from memory with no option at all: offer to create a project
+if (-not $FromFile -and -not $Init -and -not $Name -and -not $CheckOnly) {
+    $Name = (Read-Host "`nName of your report (leave empty to only install the tools)").Trim()
 }
 
 # Pygments is only needed by minted, which the example report uses
-$projectDir = if ($Init) { $null } elseif ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
+$projectDir = if ($Name) { $null } elseif ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
 $needsMinted = [bool]$Example
-if (-not $Init) {
+if (-not $Name) {
     $mainTex = Join-Path $projectDir 'main.tex'
     $needsMinted = (Test-Path $mainTex) -and (Select-String -Path $mainTex -Pattern '\{minted\}' -Quiet)
 }
@@ -229,10 +242,10 @@ if ($results.Values -contains 'just installed') {
     Write-Host "`n  Some tools were just installed: restart VS Code (and any open terminal) so it sees them."
 }
 
-if ($Init -and -not $CheckOnly) {
+if ($Name -and -not $CheckOnly) {
     Write-Step 'New project'
     $branch = if ($Example) { 'example' } else { 'main' }
-    $projectDir = New-Project $Init $branch
+    $projectDir = New-Project $Name $branch
 }
 
 if ($Test -and $projectDir) {
@@ -256,7 +269,7 @@ if ($notReady.Count -gt 0) {
     return
 }
 
-if ($Init -and $projectDir) {
+if ($Name -and $projectDir) {
     if (Find-Command 'code') { code $projectDir }
     Write-Host "`nAll set. VS Code is opening ${projectDir}: open main.tex and press Ctrl+Alt+B." -ForegroundColor Green
 } else {

@@ -8,7 +8,12 @@ One command installs the toolchain on **Windows** or **Linux** and creates a rea
 
 ## Quick start
 
-You only need **[Visual Studio Code](https://code.visualstudio.com/download)**. Open a terminal in the folder where you keep your projects and run the command for your system. It checks what is installed, asks before installing anything missing, creates the project folder and opens it in VS Code.
+### Requirements
+
+- **[Visual Studio Code](https://code.visualstudio.com/download)**
+- The **[LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)** extension: install it from the Extensions view (**Ctrl+Shift+X**, search "LaTeX Workshop"), or run `code --install-extension james-yu.latex-workshop`
+
+The setup script below installs everything else (the TeX distribution, Perl, ...). Open a terminal in the folder where you keep your projects and run the command for your system. It checks what is installed, asks before installing anything missing, creates the project folder and opens it in VS Code.
 
 **Windows** (PowerShell):
 
@@ -22,13 +27,13 @@ iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/set
 curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report
 ```
 
-Replace `my-report` with your project name. Then open `main.tex` and press **Ctrl+Alt+B**.
+Replace `my-report` with your project name, or leave it out (just `-Init` or `--init`) and the script asks for it. Then open `main.tex` and press **Ctrl+Alt+B**.
 
 ### Options
 
 | Windows | Linux | Effect |
 |---|---|---|
-| `-Init NAME` | `--init NAME` | Create a project in the folder `NAME` and open it in VS Code |
+| `-Init [NAME]` | `--init [NAME]` | Create a project in the folder `NAME` and open it in VS Code. Without `NAME`, the script asks for it |
 | `-Example` | `--example` | With init, start from the example report instead of the empty one |
 | `-CheckOnly` | `--check` | Only report what is installed, change nothing |
 | `-Yes` | `--yes` | Install everything missing without asking |

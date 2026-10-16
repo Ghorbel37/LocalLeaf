@@ -4,6 +4,7 @@
 #
 #   ./setup.sh                    check, then install what is missing (asks first)
 #   ./setup.sh --init my-report   also create a new project and open it in VS Code
+#   ./setup.sh --init             same, and ask for the project name
 #   ./setup.sh --example          with --init, start from the example report
 #   ./setup.sh --check            only report what is installed
 #   ./setup.sh --yes              install what is missing without asking
@@ -19,13 +20,16 @@ set -u
 
 REPO="Ghorbel37/LocalLeaf"
 INIT=""
+ASK_NAME=0
 EXAMPLE=0
 CHECK_ONLY=0
 YES=0
 TEST=0
 while [ $# -gt 0 ]; do
     case "$1" in
-        --init) INIT="${2:-}"; shift ;;
+        --init)
+            ASK_NAME=1
+            case "${2:-}" in ""|-*) ;; *) INIT="$2"; shift ;; esac ;;
         --example) EXAMPLE=1 ;;
         --check) CHECK_ONLY=1 ;;
         --yes) YES=1 ;;
@@ -141,10 +145,23 @@ new_project() {
 echo "LocalLeaf: LaTeX in VS Code, set up on Linux (package manager: $PM)"
 [ "$CHECK_ONLY" -eq 1 ] && echo "(check only, nothing will be installed)"
 
-# Piped from curl with no project name: offer to create one
-if [ ! -f "$0" ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
+# --init without a name: ask for it
+if [ "$ASK_NAME" -eq 1 ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
     echo
-    INIT="$(ask "Name of the project folder to create here (leave empty to only install the tools): " "")"
+    for _ in 1 2 3; do
+        INIT="$(ask "Name of your report (a folder with this name is created here): " "")"
+        [ -n "$INIT" ] && break
+    done
+    if [ -z "$INIT" ]; then
+        red "No project name given, run again with --init NAME."
+        exit 2
+    fi
+fi
+
+# Piped from curl with no option at all: offer to create a project
+if [ ! -f "$0" ] && [ "$ASK_NAME" -eq 0 ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
+    echo
+    INIT="$(ask "Name of your report (leave empty to only install the tools): " "")"
 fi
 
 # Pygments is only needed by minted, which the example report uses
