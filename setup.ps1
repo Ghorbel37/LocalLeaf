@@ -143,8 +143,9 @@ function New-Project($Name, $Branch) {
     } finally {
         Remove-Item -Recurse -Force $tmp -ErrorAction SilentlyContinue
     }
-    # The setup scripts are not part of a project
+    # The setup scripts and the repository images are not part of a project
     Remove-Item (Join-Path $target 'setup.ps1'), (Join-Path $target 'setup.sh') -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force (Join-Path $target '.github') -ErrorAction SilentlyContinue
     if (Find-Command 'git') {
         git -C $target init --quiet
         Write-Ok "Created $target (new Git repository)"

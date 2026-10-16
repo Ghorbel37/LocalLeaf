@@ -133,6 +133,7 @@ new_project() {
         return 1
     fi
     rm -f "$target/setup.ps1" "$target/setup.sh"
+    rm -rf "$target/.github"
     if command -v git >/dev/null 2>&1; then
         git -C "$target" init --quiet
         green "  [OK]      Created $target (new Git repository)"
