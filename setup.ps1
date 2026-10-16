@@ -53,10 +53,11 @@ param(
     [switch]$Test
 )
 
-$ErrorActionPreference = 'Stop'
 $Repo = 'Ghorbel37/LocalLeaf'
-# Run from a file (-File) or from memory (irm | iex): never close the terminal in the second case
+# Run from a file (-File) or from memory (irm | iex): never close the terminal in the second case,
+# and do not change the settings of the terminal session it runs in
 $FromFile = [bool]$PSCommandPath
+if ($FromFile) { $ErrorActionPreference = 'Stop' }
 
 function Write-Step($Text) { Write-Host "`n== $Text" -ForegroundColor Cyan }
 function Write-Ok($Text)   { Write-Host "  [OK]      $Text" -ForegroundColor Green }
@@ -163,15 +164,30 @@ Write-Host 'LocalLeaf: LaTeX in VS Code, set up on Windows' -ForegroundColor Cya
 if ($CheckOnly) { Write-Host '(check only, nothing will be installed)' }
 
 # -Init without a name: ask for it
+$asked = $false
 if ($Init -and -not $Name -and -not $CheckOnly) {
     while (-not $Name) {
         $Name = (Read-Host "`nName of your report (a folder with this name is created here)").Trim()
     }
+    $asked = $true
 }
 
 # Run from memory with no option at all: offer to create a project
 if (-not $FromFile -and -not $Init -and -not $Name -and -not $CheckOnly) {
     $Name = (Read-Host "`nName of your report (leave empty to only install the tools)").Trim()
+    $asked = [bool]$Name
+}
+
+# Name asked interactively and no template chosen: offer the three templates
+if ($asked -and -not $Example -and -not $Enis) {
+    Write-Host "`nWhich template?"
+    Write-Host '  1. Empty report (default)'
+    Write-Host '  2. Full example report: figures, tables, code, equations...'
+    Write-Host '  3. ENIS graduation report (by Jacem Chaieb)'
+    switch ((Read-Host 'Your choice [1]').Trim()) {
+        '2' { $Example = $true }
+        '3' { $Enis = $true }
+    }
 }
 
 # Pygments is only needed by minted, which the example report uses

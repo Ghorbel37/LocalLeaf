@@ -22,6 +22,7 @@ set -u
 REPO="Ghorbel37/LocalLeaf"
 INIT=""
 ASK_NAME=0
+ASKED=0
 EXAMPLE=0
 ENIS=0
 CHECK_ONLY=0
@@ -161,12 +162,27 @@ if [ "$ASK_NAME" -eq 1 ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
         red "No project name given, run again with --init NAME."
         exit 2
     fi
+    ASKED=1
 fi
 
 # Piped from curl with no option at all: offer to create a project
 if [ ! -f "$0" ] && [ "$ASK_NAME" -eq 0 ] && [ -z "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
     echo
     INIT="$(ask "Name of your report (leave empty to only install the tools): " "")"
+    [ -n "$INIT" ] && ASKED=1
+fi
+
+# Name asked interactively and no template chosen: offer the three templates
+if [ "$ASKED" -eq 1 ] && [ "$EXAMPLE" -eq 0 ] && [ "$ENIS" -eq 0 ]; then
+    echo
+    echo "Which template?"
+    echo "  1. Empty report (default)"
+    echo "  2. Full example report: figures, tables, code, equations..."
+    echo "  3. ENIS graduation report (by Jacem Chaieb)"
+    case "$(ask "Your choice [1]: " "1")" in
+        2) EXAMPLE=1 ;;
+        3) ENIS=1 ;;
+    esac
 fi
 
 # Pygments is only needed by minted, which the example report uses

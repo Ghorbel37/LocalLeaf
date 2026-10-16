@@ -19,23 +19,33 @@ One command installs the toolchain on **Windows** or **Linux** and creates a rea
 - **[Visual Studio Code](https://code.visualstudio.com/download)**
 - The **[LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)** extension: install it from the Extensions view (**Ctrl+Shift+X**, search "LaTeX Workshop"), or run `code --install-extension james-yu.latex-workshop`
 
-The setup script below installs everything else (the TeX distribution, Perl, ...). Open a terminal in the folder where you keep your projects and run the command for your system. It checks what is installed, asks before installing anything missing, creates the project folder and opens it in VS Code.
+The setup script below installs everything else (the TeX distribution, Perl, ...). Open a terminal in the folder where you keep your projects and run the command for your system:
 
 **Windows** (PowerShell):
 
 ```powershell
-iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1) } -Init my-report"
+irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1 | iex
 ```
 
 **Linux** (bash):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report
+curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash
 ```
 
-Replace `my-report` with your project name, or leave it out (just `-Init` or `--init`) and the script asks for it. Then open `main.tex` and press **Ctrl+Alt+B**.
+It guides you through everything: it asks for your report name and which template you want (empty, full example or ENIS), checks what is installed, asks before installing anything missing, creates the project folder and opens it in VS Code. Then open the main `.tex` file and press **Ctrl+Alt+B**.
 
 ### Options
+
+To skip the questions or use the script in your own scripts, pass options:
+
+```powershell
+iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.ps1) } -Init my-report -Example"
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report --example
+```
 
 | Windows | Linux | Effect |
 |---|---|---|
@@ -166,6 +176,10 @@ latexmk -C               # remove build files and the PDF
 - [LaTeX Workshop wiki](https://github.com/James-Yu/LaTeX-Workshop/wiki)
 - [Overleaf's LaTeX guides](https://www.overleaf.com/learn), still the best place to learn LaTeX
 - [biblatex](https://ctan.org/pkg/biblatex), [acro](https://ctan.org/pkg/acro), [listings](https://ctan.org/pkg/listings), [minted](https://ctan.org/pkg/minted) and [latexmk](https://ctan.org/pkg/latexmk) documentation
+
+## Support
+
+If LocalLeaf helped you, a star or a mention is appreciated.
 
 ## License
 
