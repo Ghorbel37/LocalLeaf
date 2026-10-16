@@ -42,10 +42,14 @@ iex "& { $(irm https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/set
 curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.sh | bash -s -- --init my-report --enis
 ```
 
-Then open `001-report.tex` and press **Ctrl+Alt+B**. In a terminal, `latexmk` builds it.
+You can also run the short command from the [main README](https://github.com/Ghorbel37/LocalLeaf#quick-start) and pick the ENIS template when it asks. Then open `001-report.tex` and press **Ctrl+Alt+B**. In a terminal, `latexmk` builds it.
 
 > [!WARNING]
 > This template uses `minted` for code, so it builds with `-shell-escape` and is the part most likely to break. If code blocks fail, follow the [minted troubleshooting guide](https://github.com/Ghorbel37/LocalLeaf#minted-troubleshooting). The [main README](https://github.com/Ghorbel37/LocalLeaf#readme) also covers manual installation.
+
+## Support
+
+If LocalLeaf helped you, a star or a mention is appreciated. And credit Jacem Chaieb for the template itself.
 
 ## License
 
