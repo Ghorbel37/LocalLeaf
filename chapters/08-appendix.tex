@@ -1,0 +1,33 @@
+\chapter{Full Code Listing}
+\label{app:listing}
+
+Appendices are numbered with letters. They are the right place for long
+tables, extra figures or complete code listings like \cref{lst:full}.
+
+\begin{listing}[H]
+  \begin{minted}{python}
+import csv
+from statistics import mean, pstdev
+
+
+def load_scores(path: str) -> list[float]:
+    """Read the 'score' column of a CSV file."""
+    with open(path, newline="", encoding="utf-8") as f:
+        return [float(row["score"]) for row in csv.DictReader(f)]
+
+
+def summarize(scores: list[float]) -> dict[str, float]:
+    """Mean and standard deviation, as in the equations of chapter 4."""
+    return {
+        "count": len(scores),
+        "mean": mean(scores),
+        "std": pstdev(scores),
+    }
+
+
+if __name__ == "__main__":
+    print(summarize(load_scores("results.csv")))
+  \end{minted}
+  \caption{A complete script.}
+  \label{lst:full}
+\end{listing}

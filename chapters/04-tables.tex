@@ -1,0 +1,114 @@
+\chapter{Tables}
+\label{chap:tables}
+
+\section{A simple table}
+
+\Cref{tab:simple} uses the \texttt{booktabs} rules (\verb|\toprule|,
+\verb|\midrule|, \verb|\bottomrule|), which look cleaner than vertical lines.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lrr}
+    \toprule
+    \textbf{Model} & \textbf{Accuracy (\%)} & \textbf{Time (s)} \\
+    \midrule
+    Baseline     & 71.2 & 0.8 \\
+    Improved     & 84.5 & 1.4 \\
+    Final        & \textbf{89.3} & 1.1 \\
+    \bottomrule
+  \end{tabular}
+  \caption{A simple table with aligned numbers.}
+  \label{tab:simple}
+\end{table}
+
+\section{A table as wide as the text}
+
+With \texttt{tabularx}, the \texttt{X} columns share the remaining width and
+wrap long text, as in \cref{tab:wide}.
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\linewidth}{l X l}
+    \toprule
+    \textbf{Tool} & \textbf{Role} & \textbf{Needed by} \\
+    \midrule
+    \TeX{} distribution & Compilers and packages: MiKTeX on Windows, \TeX{} Live on Linux & everything \\
+    Perl & Runs \texttt{latexmk}, which decides how many passes are needed & automatic builds \\
+    Pygments & Highlights the code blocks of \cref{chap:code-math} & \texttt{minted} \\
+    Biber & Sorts and formats the bibliography & \texttt{biblatex} \\
+    \bottomrule
+  \end{tabularx}
+  \caption{A table that fills the text width.}
+  \label{tab:wide}
+\end{table}
+
+\section{Merged cells and colors}
+
+\Cref{tab:merged} merges cells across columns with \verb|\multicolumn| and
+across rows with \verb|\multirow|, and colors a header and alternate rows.
+
+\begin{table}[H]
+  \centering
+  \rowcolors{3}{gray!10}{white}
+  \begin{tabular}{l l c c c}
+    \toprule
+    \rowcolor{blue!15}
+    & & \multicolumn{3}{c}{\textbf{Score per sprint}} \\
+    \rowcolor{blue!15}
+    \textbf{Module} & \textbf{Task} & \textbf{S1} & \textbf{S2} & \textbf{S3} \\
+    \midrule
+    % With colored rows, put \multirow in the LAST row of the group, with a
+    % negative count, or the next row's color hides its text
+                               & Indexing   & 3 & 5 & 8 \\
+    \multirow{-2}{*}{Search}   & Ranking    & 2 & 4 & 7 \\
+                               & Components & 4 & 6 & 6 \\
+    \multirow{-2}{*}{Frontend} & Tests      & 1 & 3 & 5 \\
+    Backend                   & API        & 5 & 7 & 9 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Merged cells and colored rows.}
+  \label{tab:merged}
+\end{table}
+
+\section{A table across several pages}
+
+A \texttt{longtable} breaks across pages and repeats its header on each one.
+It is not a floating environment, so it sits exactly where it is written
+(\cref{tab:long}).
+
+\begin{longtable}{c l l r}
+  \caption{A long table that can span several pages.}
+  \label{tab:long} \\
+  \toprule
+  \textbf{\#} & \textbf{Item} & \textbf{Category} & \textbf{Value} \\
+  \midrule
+  \endfirsthead
+  \multicolumn{4}{l}{\small\itshape Continued from the previous page} \\
+  \toprule
+  \textbf{\#} & \textbf{Item} & \textbf{Category} & \textbf{Value} \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{4}{r}{\small\itshape Continued on the next page} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+  1  & Requirements gathering & Planning     & 12 \\
+  2  & State of the art       & Research     & 20 \\
+  3  & Architecture           & Design       & 15 \\
+  4  & Data collection        & Data         & 18 \\
+  5  & Data cleaning          & Data         & 10 \\
+  6  & First prototype        & Development  & 25 \\
+  7  & Unit tests             & Quality      & 8  \\
+  8  & Integration            & Development  & 14 \\
+  9  & Performance tuning     & Development  & 11 \\
+  10 & User feedback          & Validation   & 6  \\
+  11 & Second iteration       & Development  & 22 \\
+  12 & Documentation          & Writing      & 9  \\
+  13 & Deployment             & Operations   & 7  \\
+  14 & Monitoring             & Operations   & 5  \\
+  15 & Report writing         & Writing      & 30 \\
+  16 & Slides                 & Writing      & 6  \\
+  17 & Rehearsal              & Presentation & 3  \\
+  18 & Defense                & Presentation & 1  \\
+\end{longtable}

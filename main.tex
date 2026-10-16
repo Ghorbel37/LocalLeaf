@@ -37,18 +37,37 @@
 \usepackage{float}              % [H] placement
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{wrapfig}            % text flowing around a figure
 \usepackage{booktabs}           % professional table rules
-\usepackage{tabularx}
-\usepackage{xcolor}
-\usepackage{tikz}
+\usepackage{tabularx}           % tables as wide as the text
+\usepackage{multirow}           % cells spanning several rows
+\usepackage{longtable}          % tables spanning several pages
+\usepackage[table]{xcolor}      % colors, including table rows
+\usepackage{tikz}               % diagrams
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage{pgfplots}           % charts
+\pgfplotsset{compat=1.18}
+
+% --- Boxes, lists, quotes ------------------------------------------------
+\usepackage[most]{tcolorbox}    % colored boxes
+\newtcolorbox{notebox}[1][Note]{colback=blue!5, colframe=blue!60!black, fonttitle=\bfseries, title=#1}
+\newtcolorbox{warningbox}[1][Warning]{colback=orange!8, colframe=orange!80!black, fonttitle=\bfseries, title=#1}
+\usepackage{enumitem}           % customizable lists
+\usepackage{csquotes}           % \enquote{...} and display quotes
 
 % --- Math ----------------------------------------------------------------
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[chapter]
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
 
 % --- Code highlighting (needs Pygments and -shell-escape) ----------------
 \usepackage{minted}
 \setminted{frame=lines, framesep=2mm, fontsize=\small, linenos, breaklines}
+\renewcommand{\listingscaption}{Listing}
 
 % --- Acronyms ------------------------------------------------------------
 \usepackage{acro}
@@ -63,6 +82,8 @@
 \usepackage[nameinlink]{cleveref}
 \crefname{listing}{listing}{listings}
 \Crefname{listing}{Listing}{Listings}
+\crefname{definition}{definition}{definitions}
+\crefname{example}{example}{examples}
 
 % --- Report information --------------------------------------------------
 \input{metadata}
@@ -83,6 +104,7 @@
 \tableofcontents
 \listoffigures
 \listoftables
+\listoflistings
 \printacronyms[heading=chapter*, name=List of Acronyms]
 
 % --- Main matter (arabic page numbers) -----------------------------------
@@ -90,13 +112,16 @@
 \pagenumbering{arabic}
 
 \input{chapters/02-introduction}
-\input{chapters/03-example-chapter}
-\input{chapters/04-conclusion}
+\input{chapters/03-figures}
+\input{chapters/04-tables}
+\input{chapters/05-code-and-math}
+\input{chapters/06-writing-tools}
+\input{chapters/07-conclusion}
 
 % --- Back matter ---------------------------------------------------------
 \printbibliography[heading=bibintoc]
 
 \appendix
-\input{chapters/05-appendix}
+\input{chapters/08-appendix}
 
 \end{document}

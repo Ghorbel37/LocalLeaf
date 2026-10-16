@@ -46,7 +46,7 @@ Leave out the init option to only install the tools. The Windows script installs
 | Branch | What's inside | Pick it if |
 |---|---|---|
 | [`main`](../../tree/main) | The VS Code config, a `.gitignore` and the report structure **with empty chapters**. | You want a clean start (this is what **Use this template** gives you) |
-| [`example`](../../tree/example) | The same report **filled with an example**: a cheat-sheet chapter showing figures, tables, highlighted code (`minted`), equations, citations and acronyms. Also holds the setup scripts | You want to see what it can do, or keep the examples at hand while writing |
+| [`example`](../../tree/example) | A **full example report** (about 20 pages): images, subfigures, TikZ diagrams and charts, merged, colored and multi-page tables, highlighted code (`minted`), equations and theorems, citations, acronyms, footnotes and colored boxes. Also holds the setup scripts | You want to see what it can do, or keep the examples at hand while writing |
 
 Without the setup script: click **Use this template** for `main`, or clone a flavor with `git clone -b example https://github.com/Ghorbel37/LocalLeaf.git`, or download the [`main`](../../archive/refs/heads/main.zip) or [`example`](../../archive/refs/heads/example.zip) ZIP.
 
@@ -119,7 +119,7 @@ latexmk -C               # remove build files and the PDF
 
 - Fill in [`metadata.tex`](metadata.tex). To show a logo on the title page, put it in `images/` and set `\reportLogo`.
 - Each chapter is a file in [`chapters/`](chapters/), included from `main.tex` with `\input{chapters/...}`. Add, remove or rename them freely.
-- Need an example of a figure, table, equation or citation? See the [example chapter](../../blob/example/chapters/03-example-chapter.tex).
+- Need an example of a figure, table, equation or citation? See the [chapters of the example report](../../tree/example/chapters).
 - For a French report, change `\usepackage[english]{babel}` to `\usepackage[french]{babel}` in `main.tex`.
 - The `example` branch builds with `-shell-escape`, because `minted` needs it to call Pygments. Only build documents you trust with it.
 
