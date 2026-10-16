@@ -44,7 +44,8 @@ curl -fsSL https://raw.githubusercontent.com/Ghorbel37/LocalLeaf/example/setup.s
 
 Then open `001-report.tex` and press **Ctrl+Alt+B**. In a terminal, `latexmk` builds it.
 
-This template uses `minted` for code, so it needs Pygments and builds with `-shell-escape`. See the [main README](https://github.com/Ghorbel37/LocalLeaf#readme) for manual installation and troubleshooting.
+> [!WARNING]
+> This template uses `minted` for code, so it builds with `-shell-escape` and is the part most likely to break. If code blocks fail, follow the [minted troubleshooting guide](https://github.com/Ghorbel37/LocalLeaf#minted-troubleshooting). The [main README](https://github.com/Ghorbel37/LocalLeaf#readme) also covers manual installation.
 
 ## License
 
