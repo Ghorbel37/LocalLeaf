@@ -41,20 +41,22 @@ Replace `my-report` with your project name, or leave it out (just `-Init` or `--
 |---|---|---|
 | `-Init [NAME]` | `--init [NAME]` | Create a project in the folder `NAME` and open it in VS Code. Without `NAME`, the script asks for it |
 | `-Example` | `--example` | With init, start from the example report instead of the empty one |
+| `-Enis` | `--enis` | With init, start from the ENIS graduation report template |
 | `-CheckOnly` | `--check` | Only report what is installed, change nothing |
 | `-Yes` | `--yes` | Install everything missing without asking |
 | `-Test` | `--test` | Build `main.tex` at the end to prove everything works |
 
 Leave out the init option to only install the tools. The Windows script installs with [winget](https://learn.microsoft.com/windows/package-manager/winget/), which ships with Windows 10 and 11, and tells MiKTeX to download missing LaTeX packages automatically. The Linux script works with apt (Debian, Ubuntu, Mint), dnf (Fedora) and pacman (Arch, Manjaro), and uses `sudo` for the packages.
 
-## Two flavors
+## Three flavors
 
 | Branch | What's inside | Pick it if |
 |---|---|---|
 | [`main`](../../tree/main) | The VS Code config, a `.gitignore` and the report structure **with empty chapters**. | You want a clean start (this is what **Use this template** gives you) |
 | [`example`](../../tree/example) | A **full example report** (about 20 pages): images, subfigures, TikZ diagrams and charts, merged, colored and multi-page tables, highlighted code (`minted`), equations and theorems, citations, acronyms, footnotes and colored boxes. Also holds the setup scripts | You want to see what it can do, or keep the examples at hand while writing |
+| [`enis`](../../tree/enis) | The ENIS (National Engineering School of Sfax) graduation report template by [Jacem Chaieb](https://github.com/kidager/enis-report-latex), with the LocalLeaf setup | You are writing an ENIS graduation report |
 
-Without the setup script: click **Use this template** for `main`, or clone a flavor with `git clone -b example https://github.com/Ghorbel37/LocalLeaf.git`, or download the [`main`](../../archive/refs/heads/main.zip) or [`example`](../../archive/refs/heads/example.zip) ZIP.
+Without the setup script: click **Use this template** for `main`, or clone a flavor with `git clone -b example https://github.com/Ghorbel37/LocalLeaf.git`, or download the [`main`](../../archive/refs/heads/main.zip), [`example`](../../archive/refs/heads/example.zip) or [`enis`](../../archive/refs/heads/enis.zip) ZIP.
 
 ## What's in a project
 
@@ -80,7 +82,7 @@ Prefer to install things yourself? The only real difference between the two syst
 | TeX distribution | `pdflatex`, `latexmk`, `biber` and the LaTeX packages | [MiKTeX](https://miktex.org/download) | [TeX Live](https://tug.org/texlive/), from your package manager (see below) |
 | Perl | `latexmk` is a Perl script | [Strawberry Perl](https://strawberryperl.com/) | Already installed |
 | LaTeX Workshop | VS Code extension: build, preview, SyncTeX, autocompletion | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) | [Marketplace](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) |
-| Pygments | Only for the `example` branch: code highlighting with `minted` | [uv](https://docs.astral.sh/uv/getting-started/installation/), then `uv tool install pygments` | `python3-pygments` from your package manager |
+| Pygments | Only for the `example` and `enis` branches: code highlighting with `minted` | [uv](https://docs.astral.sh/uv/getting-started/installation/), then `uv tool install pygments` | `python3-pygments` from your package manager |
 
 **Windows:** after installing MiKTeX, open the **MiKTeX Console**, go to **Settings** and set "Install missing packages on-the-fly" to **Always**. Install Strawberry Perl after MiKTeX and restart VS Code so it finds both.
 

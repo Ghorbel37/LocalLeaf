@@ -26,6 +26,9 @@
 .PARAMETER Example
     With -Init, start from the example report instead of the empty one.
 
+.PARAMETER Enis
+    With -Init, start from the ENIS graduation report template by Jacem Chaieb.
+
 .PARAMETER CheckOnly
     Only report what is installed, change nothing.
 
@@ -44,6 +47,7 @@ param(
     [Parameter(Position = 0)]
     [string]$Name,
     [switch]$Example,
+    [switch]$Enis,
     [switch]$CheckOnly,
     [switch]$Yes,
     [switch]$Test
@@ -172,7 +176,7 @@ if (-not $FromFile -and -not $Init -and -not $Name -and -not $CheckOnly) {
 
 # Pygments is only needed by minted, which the example report uses
 $projectDir = if ($Name) { $null } elseif ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
-$needsMinted = [bool]$Example
+$needsMinted = $Example -or $Enis
 if (-not $Name) {
     $mainTex = Join-Path $projectDir 'main.tex'
     $needsMinted = (Test-Path $mainTex) -and (Select-String -Path $mainTex -Pattern '\{minted\}' -Quiet)
@@ -206,7 +210,7 @@ Test-Tool -Name 'LaTeX Workshop' -Url 'https://marketplace.visualstudio.com/item
     }
 
 if ($needsMinted) {
-    Write-Step 'Code highlighting (minted, used by the example report)'
+    Write-Step 'Code highlighting (minted, used by the example and ENIS reports)'
     Test-Tool -Name 'uv' -Url 'https://docs.astral.sh/uv/getting-started/installation/' `
         -Detect { Find-Command 'uv' } `
         -Install { Install-WithWinget 'astral-sh.uv' 'uv' }
@@ -245,7 +249,7 @@ if ($results.Values -contains 'just installed') {
 
 if ($Name -and -not $CheckOnly) {
     Write-Step 'New project'
-    $branch = if ($Example) { 'example' } else { 'main' }
+    $branch = if ($Enis) { 'enis' } elseif ($Example) { 'example' } else { 'main' }
     $projectDir = New-Project $Name $branch
 }
 
@@ -258,8 +262,9 @@ if ($Test -and $projectDir) {
         try {
             $latexmkArgs = @('-pdf', '-interaction=nonstopmode', '-quiet')
             if ($needsMinted) { $latexmkArgs += '-shell-escape' }
-            latexmk @latexmkArgs main.tex | Out-Host
-            if ($LASTEXITCODE -eq 0) { Write-Ok "main.pdf built in $projectDir" }
+            $mainFile = if (Test-Path 'main.tex') { 'main.tex' } else { '001-report.tex' }
+            latexmk @latexmkArgs $mainFile | Out-Host
+            if ($LASTEXITCODE -eq 0) { Write-Ok "PDF built in $projectDir" }
             else { Write-Err 'The build failed, see main.log for details.' }
         } finally { Pop-Location }
     }
@@ -272,7 +277,7 @@ if ($notReady.Count -gt 0) {
 
 if ($Name -and $projectDir) {
     if (Find-Command 'code') { code $projectDir }
-    Write-Host "`nAll set. VS Code is opening ${projectDir}: open main.tex and press Ctrl+Alt+B." -ForegroundColor Green
+    Write-Host "`nAll set. VS Code is opening ${projectDir}: open the main .tex file and press Ctrl+Alt+B." -ForegroundColor Green
 } else {
     Write-Host "`nAll set. Open your project folder in VS Code and press Ctrl+Alt+B to build main.tex." -ForegroundColor Green
 }

@@ -6,6 +6,7 @@
 #   ./setup.sh --init my-report   also create a new project and open it in VS Code
 #   ./setup.sh --init             same, and ask for the project name
 #   ./setup.sh --example          with --init, start from the example report
+#   ./setup.sh --enis             with --init, start from the ENIS report template (by Jacem Chaieb)
 #   ./setup.sh --check            only report what is installed
 #   ./setup.sh --yes              install what is missing without asking
 #   ./setup.sh --test             also build main.tex at the end
@@ -22,6 +23,7 @@ REPO="Ghorbel37/LocalLeaf"
 INIT=""
 ASK_NAME=0
 EXAMPLE=0
+ENIS=0
 CHECK_ONLY=0
 YES=0
 TEST=0
@@ -31,10 +33,11 @@ while [ $# -gt 0 ]; do
             ASK_NAME=1
             case "${2:-}" in ""|-*) ;; *) INIT="$2"; shift ;; esac ;;
         --example) EXAMPLE=1 ;;
+        --enis) ENIS=1 ;;
         --check) CHECK_ONLY=1 ;;
         --yes) YES=1 ;;
         --test) TEST=1 ;;
-        -h|--help) sed -n '2,16p' "$0" 2>/dev/null; exit 0 ;;
+        -h|--help) sed -n '2,18p' "$0" 2>/dev/null; exit 0 ;;
         *) echo "Unknown option: $1"; exit 2 ;;
     esac
     shift
@@ -168,6 +171,7 @@ fi
 # Pygments is only needed by minted, which the example report uses
 PROJECT_DIR=""
 NEEDS_MINTED=$EXAMPLE
+[ "$ENIS" -eq 1 ] && NEEDS_MINTED=1
 if [ -z "$INIT" ]; then
     if [ -f "$0" ]; then PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"; else PROJECT_DIR="$PWD"; fi
     grep -q '{minted}' "$PROJECT_DIR/main.tex" 2>/dev/null && NEEDS_MINTED=1
@@ -187,7 +191,7 @@ check_tool "LaTeX Workshop" "code --list-extensions | grep -qx james-yu.latex-wo
     "https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop"
 
 if [ "$NEEDS_MINTED" -eq 1 ]; then
-    step "Code highlighting (minted, used by the example report)"
+    step "Code highlighting (minted, used by the example and ENIS reports)"
     check_tool "Pygments" "command -v pygmentize && kpsewhich minted.sty" install_pygments "https://pygments.org/"
 fi
 
@@ -198,7 +202,9 @@ fi
 
 if [ -n "$INIT" ] && [ "$CHECK_ONLY" -eq 0 ]; then
     step "New project"
-    if [ "$EXAMPLE" -eq 1 ]; then new_project "$INIT" example; else new_project "$INIT" main; fi
+    if [ "$ENIS" -eq 1 ]; then new_project "$INIT" enis
+    elif [ "$EXAMPLE" -eq 1 ]; then new_project "$INIT" example
+    else new_project "$INIT" main; fi
 fi
 
 if [ "$TEST" -eq 1 ] && [ -n "$PROJECT_DIR" ]; then
@@ -207,8 +213,8 @@ if [ "$TEST" -eq 1 ] && [ -n "$PROJECT_DIR" ]; then
     [ "$NEEDS_MINTED" -eq 1 ] && LATEXMK_ARGS="$LATEXMK_ARGS -shell-escape"
     if [ "$MISSING" -eq 1 ]; then
         red "  Skipping the test build: some tools are missing."
-    elif (cd "$PROJECT_DIR" && latexmk $LATEXMK_ARGS main.tex); then
-        green "  [OK]      main.pdf built in $PROJECT_DIR"
+    elif (cd "$PROJECT_DIR" && f=main.tex && { [ -f "$f" ] || f=001-report.tex; } && latexmk $LATEXMK_ARGS "$f"); then
+        green "  [OK]      PDF built in $PROJECT_DIR"
     else
         red "  [ERROR]   The build failed, see main.log for details."
     fi
@@ -219,7 +225,7 @@ fi
 echo
 if [ -n "$INIT" ] && [ -n "$PROJECT_DIR" ]; then
     command -v code >/dev/null 2>&1 && code "$PROJECT_DIR"
-    green "All set. VS Code is opening $PROJECT_DIR: open main.tex and press Ctrl+Alt+B."
+    green "All set. VS Code is opening $PROJECT_DIR: open the main .tex file and press Ctrl+Alt+B."
 else
     green "All set. Open your project folder in VS Code and press Ctrl+Alt+B to build main.tex."
 fi
