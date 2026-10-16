@@ -46,9 +46,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
-% --- Code highlighting (needs Pygments and -shell-escape) ----------------
-\usepackage{minted}
-\setminted{frame=lines, framesep=2mm, fontsize=\small, linenos, breaklines}
+% --- Code listings (pure LaTeX, no external tool needed) -----------------
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small, frame=lines, numbers=left, breaklines=true,
+        keywordstyle=\color{blue}, commentstyle=\color{gray}, stringstyle=\color{teal}}
 
 % --- Acronyms ------------------------------------------------------------
 \usepackage{acro}
@@ -61,8 +62,8 @@
 % --- Links (load last) ---------------------------------------------------
 \usepackage[hidelinks]{hyperref}
 \usepackage[nameinlink]{cleveref}
-\crefname{listing}{listing}{listings}
-\Crefname{listing}{Listing}{Listings}
+\crefname{lstlisting}{listing}{listings}
+\Crefname{lstlisting}{Listing}{Listings}
 
 % --- Report information --------------------------------------------------
 \input{metadata}

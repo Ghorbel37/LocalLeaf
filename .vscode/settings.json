@@ -20,11 +20,9 @@
     ],
     "latex-workshop.latex.tools": [
         {
-            // -shell-escape is required by minted (code highlighting via Pygments)
             "name": "latexmk",
             "command": "latexmk",
             "args": [
-                "-shell-escape",
                 "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",
@@ -39,7 +37,6 @@
             "command": "pdflatex",
             "args": [
                 "--max-print-line=10000",
-                "-shell-escape",
                 "-synctex=1",
                 "-interaction=nonstopmode",
                 "-file-line-error",

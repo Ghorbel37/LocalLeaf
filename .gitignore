@@ -51,10 +51,6 @@
 *.snm
 *.vrb
 
-# minted (syntax highlighting cache)
-_minted*/
-*.pyg
-*.minted
 
 # ============================================================
 #  Editor and OS
